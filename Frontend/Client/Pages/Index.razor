@@ -1,0 +1,22 @@
+﻿@page "/"
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="jumbotron">
+            <Products ItemAdded="OnItemAdded" />
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <Cart @ref="cart" />
+    </div>
+</div>
+
+@code {
+    Cart cart = null!;
+
+    async Task OnItemAdded()
+    {
+        //await cart.RefreshAsync();
+    }
+}

@@ -1,0 +1,110 @@
+﻿@implements IAsyncDisposable
+@using Microsoft.AspNetCore.SignalR.Client
+@inject IItemsClient CatalogItemsClient
+@inject ICartClient CartClient
+@inject ILocalStorageService LocalStorage 
+@inject NavigationManager NavigationManager
+
+@if (catalogItems is null)
+{
+    <p><em>Loading catalog items...</em></p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            @foreach (var catalogItem in catalogItems)
+            {
+                <div class="col">
+                    <div class="card p-2 mb-4">
+                        <div class="card-body">
+                            <div class="card-text">
+                                <h5>@catalogItem.Name</h5>
+                                <div class="d-flex justify-content-between align-catalogItems-center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="async () => await AddItem(catalogItem)" disabled="@(catalogItem.QuantityAvailable  == 0)"><i class="oi oi-plus" /></button>
+                                        @*<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>*@
+                                    </div>
+                                    <small class="text-muted">
+                                        @(catalogItem.VatIncluded ? catalogItem.Price.ToString("c") : (catalogItem.Price * (1m + (decimal)catalogItem.VatRate)).ToString("c"))
+                                        
+                                        @{
+                                            var pantCharge = catalogItem.Charges
+                                                .FirstOrDefault(ch => ch.Name.StartsWith("Pant"));
+                                        }
+                                        @if(pantCharge is not null)
+                                        {
+                                            <p class="text-danger">+ Pant @pantCharge?.Amount?.ToString("c")</p>
+                                        }
+                                        @if (catalogItem.CustomFields.TryGetValue("compareAtPrice", out var compareAtPrice))
+                                        {
+                                            <p class="text-danger" style="text-decoration: line-through">@decimal.Parse(compareAtPrice.ToString()!).ToString("c")</p>
+                                        }  
+                                        @if(catalogItem.QuantityAvailable is not null)
+                                        {
+                                            if(catalogItem.QuantityAvailable == 0) 
+                                            {
+                                                <p class="text-danger">Out of stock</p>
+                                            }
+                                            else 
+                                            {
+                                                <p class="text-success">@catalogItem.QuantityAvailable pcs available</p>
+                                            }
+                                        }
+                                    </small>
+                                </div>
+                            </div>
+                        </div>               
+                    </div>
+                </div>
+            }
+    </div>
+}
+
+@code {
+    private IEnumerable<CatalogItemDto>? catalogItems;
+    private HubConnection hubConnection = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        catalogItems = await CatalogItemsClient.GetItemsAsync();
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{NavigationManager.BaseUri}checkout/hubs/catalog")
+            .Build();
+
+        hubConnection.On<Checkout.Contracts.CatalogItemEvent>("CatalogItemUpdated", async (ev) =>
+        {
+            await InvokeAsync(async () => {
+                catalogItems = await CatalogItemsClient.GetItemsAsync();
+
+                StateHasChanged();
+            });
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    async Task AddItem(CatalogItemDto catalogItem)
+    {
+        var cartIdStr = await LocalStorage.GetItemAsync<string?>("cartId");
+        var cartId = Guid.Parse(cartIdStr!);
+
+        await CartClient.AddItemAsync(cartId, null!, catalogItem.Id, null!, 1);
+
+            await ItemAdded.InvokeAsync();
+        }
+
+        [Parameter]
+        public EventCallback ItemAdded { get; set; }
+
+         public bool IsConnected =>
+        hubConnection.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+ }

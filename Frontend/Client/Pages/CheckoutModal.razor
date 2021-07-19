@@ -1,0 +1,118 @@
+﻿@implements IAsyncDisposable
+@using Microsoft.AspNetCore.SignalR.Client
+@using System.ComponentModel.DataAnnotations
+@inject ICheckoutClient CheckoutClient
+@inject ICartClient CartClient
+@inject NavigationManager NavigationManager
+
+<EditForm Model="@this" class="form" OnValidSubmit="CheckOut">
+
+    <DataAnnotationsValidator />
+
+    @if (cart is not null)
+    {
+        <div class="form-group">
+            <label>Amount requested:</label>
+            @cart.Total.ToString("c")
+        </div>
+    }
+
+<div class="form-group">
+
+    <div class="mb-3">
+        <label class="form-label">Amount paid</label>
+        <div class="input-group">
+            <InputNumber class="form-control" @bind-Value="this.AmountPaid" aria-label="Amount paid" />
+            <span class="input-group-text">kr</span>
+        </div>     
+    </div>
+
+    <ValidationMessage For="() => this.AmountPaid" />
+</div>
+
+    @if (cart is not null)
+    {
+        @if(AmountPaid < cart!.Total)
+        {
+            <div class="form-group">
+                <label class="form-label">Amount remaining:</label>
+                @AmountRemaining.ToString("c")
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="form-label">Amount to return</label>
+                @AmountToReturn.ToString("c")
+            </div>
+        }
+    }
+
+    <button class="btn btn-primary" disabled="@(!CanCheckOut)">Check out</button>
+    <button type="button" class="btn btn-secondary" @onclick="async () => await ModalInstance.CancelAsync()">Cancel</button>
+
+</EditForm>
+
+@code {
+    private HubConnection hubConnection = null!;
+
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; } = null!;
+
+    [Parameter] public Guid CartId { get; set; }
+
+    [Parameter] public int? CustomerNo { get; set; }
+
+    [Required] public decimal AmountPaid { get; set; }
+
+    public decimal AmountToReturn => AmountPaid - cart!.Total;
+
+    public decimal AmountRemaining => cart!.Total - AmountPaid;
+
+    public bool CanCheckOut => AmountToReturn >= 0 || AmountRemaining == 0;
+
+    CartDto? cart = new CartDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cart = await CartClient.GetCartByIdAsync(CartId);
+        
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{NavigationManager.BaseUri}checkout/hubs/payment")
+            .Build();
+
+        hubConnection.On<Payments.Contracts.PaymentConfirmedEvent>("PaymentConfirmed", async (ev) =>
+        {
+            await InvokeAsync(async () => {
+                await OnPaymentConfirmed();
+            });
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    async Task CheckOut()
+    {
+        await CheckoutClient.CheckoutAsync(new CheckoutDto
+        {
+            CartId = CartId,
+            CustomerNo = CustomerNo,
+            PaymentMethod = "Swish", //"Cash",
+            Amount = AmountPaid
+        });
+
+        //await ModalInstance.CloseAsync(ModalResult.Ok(true));
+    }
+
+    async Task OnPaymentConfirmed() 
+    {
+        await ModalInstance.CloseAsync(ModalResult.Ok(true));
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

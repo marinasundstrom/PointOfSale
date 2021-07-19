@@ -1,0 +1,420 @@
+﻿@implements IAsyncDisposable
+@using Microsoft.AspNetCore.SignalR.Client
+@inject ICartClient CartClient
+@inject IReceiptsClient ReceiptsClient
+@inject IPersonsClient PersonsClient
+@inject NavigationManager NavigationManager
+@inject IModalService ModalService
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+
+@if (person is not null)
+{
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><b>Customer:</b> @person.CustomerNo - @person.FirstName @person.LastName (@person.Ssn)</p>
+            <button class="btn btn-outline-secondary" @onclick="ClearCustomer">Clear</button>
+        </div>
+    </div>
+}
+
+@if (cart is null)
+{
+<p><em>Loading cart..</em></p> }
+            else
+            {
+<table class="table table-sm table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Unit</th>
+            <th>Price (incl. VAT)</th>
+            <th>VAT</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!cart.Items.Any())
+        {
+            <tr>
+                <td colspan="6">No items</td>
+            </tr>
+        }
+
+        @foreach (var item in cart.Items)
+        {
+            <tr>
+                <td>@item.Description</td>
+                <td>@item.Unit?.Code</td>
+                <td>@item.Price</td>
+                <td>@(item.VatRate * 100)%</td>
+                <td><input type="number" class="form-control" value="@item.Quantity" @oninput="async (e) => await UpdateItemQuantity(item, int.Parse(e.Value?.ToString() ?? '0'.ToString()))"></input></td>
+                <td>@((item.Total - item.Charge.GetValueOrDefault() - item.Discount.GetValueOrDefault()).ToString("c"))</td>
+                <td>
+                    <button class="btn btn-outline-secondary" @onclick="async () => await AddDiscount(item.Id)"><i class="oi oi-plus" /></button>
+                    <button class="btn btn-outline-secondary" @onclick="async () => await RemoveItem(item.Id)"><i class="oi oi-trash" /></button>
+                </td>
+            </tr>
+            @foreach (CartChargeDto s in item.Charges)
+            {
+                <tr>
+                    <td colspan="4" style="padding-left: 25px">@s.Description</td>
+                    <td>
+                        @(s!.Percent is not null ? (s!.Percent * 100 + "%") : null)
+                    </td>
+                    <td>
+                        @s!.Total?.ToString("c")
+                    </td>
+                    <td></td>
+                    <!-- <td><a class="btn btn-outline-secondary" @onclick="async () => await RemoveDiscount(item.Id, s)" ><i class="oi oi-trash" /></a></td> -->
+                </tr>
+            }
+            @foreach (CartDiscountDto s in item.Discounts)
+            {
+                <tr>
+                    <td colspan="4" style="padding-left: 25px">@s.Description</td>
+                    <td>
+                        @(s!.Percent is not null ? (s!.Percent * 100 + "%") : null)
+                    </td>
+                    <td>
+                        @s!.Total?.ToString("c")
+                    </td>
+                    <td><a class="btn btn-outline-secondary" @onclick="async () => await RemoveDiscount(item.Id, s)" ><i class="oi oi-trash" /></a></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (cart.Totals.Any())
+{
+    <hr />
+
+    <table class="table table-sm table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>VAT %</th>
+                                <th>Sub Total</th>
+                                <th>VAT</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in cart.Totals)
+                            {
+                            <tr>
+                                <td>@double.Parse(s.Key, System.Globalization.CultureInfo.InvariantCulture)%</td>
+        
+                                <td>@s.Value.SubTotal.ToString("c")</td>
+                                <td>@s.Value.Vat.ToString("c")</td>
+                                <td>@s.Value.Total.ToString("c")</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>}
+
+    <hr />
+
+    @if(cart.Discounts.Any())
+    { 
+    
+    <table class="table table-sm table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th colspan="4">
+                                    @if (cart.Discounts.Count() == 1)
+                                    {
+                                        <text>Discount</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Discounts</text>
+                                    }
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CartDiscountDto s in cart.Discounts)
+                            {
+        <tr>
+            <td>@s!.Amount?.ToString("c")
+                @(s!.Percent is not null ? (s!.Percent * 100 + "%") : null)
+            </td>
+            <td>
+                @s!.Total?.ToString("c")
+            </td>
+            <td>@s.Description</td>
+            <td><a class="btn btn-outline-secondary" @onclick="async () => await RemoveDiscount(s)" ><i class="oi oi-trash" /></a></td>
+        </tr>}
+                        </tbody>
+                    </table>
+
+                        <hr />
+                    }
+
+                                                <dl>
+                                                    <dt>Sub Total</dt>
+                                                    <dd>@cart.SubTotal.ToString("c")</dd>
+
+                                                    <dt>VAT</dt>
+                                                    <dd>@cart.Vat.ToString("c")</dd>
+
+                                                    @if (cart.Charge is not null)
+                                                    {
+                                                        <dt>Charges</dt>
+                                                        <dd>@cart.Charge?.ToString("c")</dd>
+                                                    }
+
+                                                    @if (cart.Discount is not null)
+                                                    {
+                                                        <dt>Discounts</dt>
+                                                        <dd>@cart.Discount?.ToString("c")</dd>
+                                                    }
+
+                                                     @if (cart.Rounding is not null && cart.Rounding != 0)
+                                                    {
+                                                        <dt>Rounding</dt>
+                                                        <dd>@cart.Rounding?.ToString("c")</dd>
+                                                    }
+
+                                                    <dt>Total</dt>
+                                                    <dd>@cart.Total.ToString("c")</dd>
+                                                </dl>
+
+                                                                <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
+                                                                    <div class="container-fluid">
+                                                                        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+                                                                            <li class="nav-item">
+                                                                                <button class="btn-lg btn-secondary" @onclick="Clear" disabled="@(!cart?.Items.Any())">Clear cart</button>
+                                                                                <button class="btn-lg btn-secondary" @onclick="FindCustomer">Find customer</button>
+                                                                                <button class="btn-lg btn-secondary" @onclick="AddDiscount" disabled="@(!cart?.Items.Any())">Add discount</button>
+                                                                            </li>
+                                                                        </ul>
+                                                                        <ul class="navbar-nav d-flex">
+                                                                            <li class="nav-item pe-2">
+                                                                                <p class="nav-link pb-0 mb-0 mr-4" style="font-size: 1.5rem">@cart?.Total.ToString("c")</p>
+                                                                            </li>
+                                                                            <li class="nav-item">
+                                                                                <button class="btn-lg btn-primary" disabled="@(!cart?.Items.Any())" @onclick="CheckOut">Check out</button>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </nav>}
+
+@code
+{
+    private CartDto? cart;
+    Guid cartId;
+    PersonDto? person;
+    private HubConnection hubConnection = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cartIdStr = await LocalStorage.GetItemAsync<string?>("cartId");
+
+        if (cartIdStr is not null)
+        {
+            cartId = Guid.Parse(cartIdStr);
+            cart = await CartClient.GetCartByIdAsync(cartId);
+
+            var customerNoStr = await LocalStorage.GetItemAsync<string?>("customerNo");
+
+            if (customerNoStr is not null)
+            {
+                person = await PersonsClient.GetPersonByCustomerNoAsync(int.Parse(customerNoStr));
+            }
+        }
+        else
+        {
+            cart = await CartClient.GetCartByTagAsync(null);
+            cartId = cart.Id;
+        }
+
+        await LocalStorage.SetItemAsync("cartId", cartId.ToString());
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{NavigationManager.BaseUri}checkout/hubs/cart")
+            .Build();
+
+        hubConnection.On<Carts.Contracts.CartItemAddedEvent>("ItemAdded", async (ev) =>
+        {
+            await InvokeAsync(async () => {
+                await RefreshAsync();
+
+                StateHasChanged();
+            });
+        });
+
+        hubConnection.On<Carts.Contracts.CartItemRemovedEvent>("ItemRemoved", async (ev) =>
+        {
+            await InvokeAsync(async () => {
+                await RefreshAsync();
+
+                StateHasChanged();
+            });
+        });
+
+        hubConnection.On<Carts.Contracts.CartItemQuantityUpdatedEvent>("ItemQuantityUpdated", async (ev) =>
+        {
+            await InvokeAsync(async () => {
+                await RefreshAsync();
+
+                StateHasChanged();
+            });
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    async Task RemoveItem(Guid cartItemId)
+    {
+        await CartClient.RemoveItemAsync(cartId, cartItemId);
+        cart = await CartClient.GetCartByIdAsync(cartId);
+    }
+
+    async Task UpdateItemQuantity(CartItemDto cartItem, double quantity)
+    {
+        if (quantity == 0)
+        {
+            return;
+        }
+
+        await CartClient.UpdateItemQuantityAsync(cartId, cartItem.Id, quantity);
+        cartItem.Quantity = quantity;
+        cart = await CartClient.GetCartByIdAsync(cartId);
+    }
+
+    public async Task RefreshAsync()
+    {
+        cart = await CartClient.GetCartByIdAsync(cartId);
+
+        StateHasChanged();
+    }
+
+    async Task CheckOut()
+    {
+        var modalParameters = new ModalParameters();
+        modalParameters.Add(nameof(CheckoutModal.CartId), cart!.Id);
+        modalParameters.Add(nameof(CheckoutModal.CustomerNo), person?.CustomerNo);
+
+        var modalRef = ModalService.Show<CheckoutModal>("Cash", modalParameters);
+        var result = await modalRef.Result;
+        if (result.Cancelled)
+            return;
+
+        cart = await CartClient.GetCartByIdAsync(cartId);
+
+        StateHasChanged();
+    }
+
+    async Task AddDiscount()
+    {
+        var modalParameters = new ModalParameters();
+        modalParameters.Add(nameof(DiscountModal.CartId), cart!.Id);
+        modalParameters.Add(nameof(CheckoutModal.CustomerNo), person?.CustomerNo);
+
+        var modalRef = ModalService.Show<DiscountModal>("Add discount", modalParameters);
+        var result = await modalRef.Result;
+        if (result.Cancelled)
+            return;
+
+        cart = await CartClient.GetCartByIdAsync(cartId);
+
+        StateHasChanged();
+    }
+
+    async Task AddDiscount(Guid cartItemId)
+    {
+        var modalParameters = new ModalParameters();
+        modalParameters.Add(nameof(DiscountModal.CartId), cart!.Id);
+        modalParameters.Add(nameof(DiscountModal.CartItemId), cartItemId);
+        modalParameters.Add(nameof(CheckoutModal.CustomerNo), person?.CustomerNo);
+
+        var modalRef = ModalService.Show<DiscountModal>("Add discount", modalParameters);
+        var result = await modalRef.Result;
+        if (result.Cancelled)
+            return;
+
+        cart = await CartClient.GetCartByIdAsync(cartId);
+
+        StateHasChanged();
+    }
+
+    async Task RemoveDiscount(CartDiscountDto discountDto)
+    {
+        await CartClient.RemoveDiscountAsync(cart!.Id, discountDto.Id);
+
+        cart = await CartClient.GetCartByIdAsync(cartId);
+
+        StateHasChanged();
+    }
+
+    async Task RemoveDiscount(Guid cartItemId, CartDiscountDto discountDto)
+    {
+        await CartClient.RemoveDiscountFromItemAsync(cart!.Id, cartItemId, discountDto.Id);
+
+        cart = await CartClient.GetCartByIdAsync(cartId);
+
+        StateHasChanged();
+    }
+
+    async Task Clear()
+    {
+        await CartClient.ClearCartAsync(cartId);
+        cart = await CartClient.GetCartByIdAsync(cartId);
+    }
+
+    async Task FindCustomer()
+    {
+        var modalRef = ModalService.Show<FindPersonModal>("Find customer");
+        var result = await modalRef.Result;
+        if (result.Cancelled)
+            return;
+
+        person = (PersonDto)result.Data;
+
+        try
+        {
+            var tag = $"customer-{person.CustomerNo.ToString()}";
+            cart = await CartClient.GetCartByTagAsync(tag);
+        }
+        catch(Exception)
+        {
+            var tag = $"customer-{person.CustomerNo.ToString()}";
+            cart = await CartClient.CreateCartAsync(tag);
+        }
+
+        cartId = cart.Id;
+
+        await LocalStorage.SetItemAsync("customerNo", person.CustomerNo.ToString());
+        await LocalStorage.SetItemAsync("cartId", cartId.ToString());
+
+        StateHasChanged();
+    }
+
+    async Task ClearCustomer()
+    {
+        await LocalStorage.RemoveItemAsync("customerNo");
+        await LocalStorage.RemoveItemAsync("cartId");
+
+        person = null;
+
+        cart = await CartClient.GetCartByTagAsync(null!);
+        cartId = cart.Id;
+
+        await LocalStorage.SetItemAsync("cartId", cartId.ToString());
+    }
+
+    public bool IsConnected =>
+        hubConnection.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

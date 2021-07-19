@@ -1,0 +1,81 @@
+﻿@page "/carts"
+@inject ICheckoutClient CheckoutClient
+@inject IPersonsClient PersonsClient
+@inject NavigationManager NavigationManager
+@inject IModalService ModalService
+@inject ILocalStorageService LocalStorage
+
+<h1>Carts</h1>
+
+@if (carts is null)
+{
+<p><em>Loading carts..</em></p> }
+else
+{
+<table class="table table-sm table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tag</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!carts.Any())
+        {
+<tr>
+    <td colspan="6">No carts</td>
+</tr>}
+
+        @foreach (var cart in carts)
+        {
+    <tr>
+        <td>@cart.Id</td>
+        <td>@cart.Tag</td>
+        <td>
+            @if (cart.Customer is not null)
+            {
+        <text>@cart.Customer?.CustomerNo - @cart.Customer?.FirstName @cart.Customer?.LastName (@cart.Customer?.Ssn)</text>}
+            </td>
+        <td>@cart.Total.ToString("c")</td>
+        <td><button class="btn btn-outline-secondary" @onclick="async () => await SelectCart(cart)">Select</button></td>
+    </tr>
+        }
+    </tbody>
+</table>}
+
+@code
+{ private IEnumerable<CheckoutCartDto>? carts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        carts = await CheckoutClient.GetCartsAsync();
+    }
+
+    async Task SelectCart(CheckoutCartDto cart)
+    {
+        if(cart.Tag?.Contains("customer-") ?? false)
+        {
+            var no = cart.Tag.Replace("customer-", string.Empty);
+
+            var p = await PersonsClient.GetPersonByCustomerNoAsync(int.Parse(no));
+
+            await LocalStorage.SetItemAsync("customerNo", p.CustomerNo);
+        }
+        else
+        {
+            await LocalStorage.RemoveItemAsync("customerNo");
+        }
+
+        await LocalStorage.SetItemAsync("cartId", cart.Id.ToString());
+
+        NavigationManager.NavigateTo("/");
+    }
+
+    async Task RemoveItem(Guid cartId)
+    {
+        //await CartClient.RemoveItemAsync(cartId, cartItemId);
+        //cart = await CartClient.GetCartByIdAsync(cartId);
+    } }

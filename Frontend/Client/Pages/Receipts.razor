@@ -1,0 +1,97 @@
+﻿@page "/receipts"
+@inject IReceiptsClient ReceiptsClient
+
+<h1>Receipts</h1>
+
+@if (receipts is null)
+{
+    <p><em>Loading receipts...</em></p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Receipt #</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var receipt in receipts._embedded.Receipts)
+            {
+            <tr>
+                <td><a href="/receipts/@receipt.ReceiptNo">@receipt.ReceiptNo</a></td>
+                <td>@receipt.Type</td>
+                <td>@receipt.Date.DateTime.ToString("g")</td>
+                <td>@receipt.Total.ToString("c")</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if(receipts._links.TryGetValue("previous", out var _)) 
+            {
+                <li class="page-item"><a class="page-link" href="#" @onclick="Prev" @onclick:preventDefault>Previous</a></li>
+            }
+            @{
+                var pages = receipts.Total / Limit;
+                var rest = receipts.Total % Limit;
+                if(rest > 0) 
+                {
+                    pages++;
+                }
+            }
+            @for(int i = 0; i < pages; i++) 
+            {
+                int p = i;
+                <li class="page-item"><a class="page-link" href="#" @onclick="() => GoTo(p)" @onclick:preventDefault>@(i + 1)</a></li>
+            }
+            @if(receipts._links.TryGetValue("next", out var _)) 
+            {
+                <li class="page-item"><a class="page-link" href="#" @onclick="Next" @onclick:preventDefault>Next</a></li>
+            }
+        </ul>
+    </nav>
+}
+
+@code {
+    private Billing.Client.Receipts? receipts;
+
+    [Parameter]
+    //[SupplyParameterFromQuery]
+    public int Skip { get; set; } = 0;
+
+    [Parameter]
+    //[SupplyParameterFromQuery]
+    public int Limit { get; set; } = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        receipts = await ReceiptsClient.GetReceiptsAsync(Skip, Limit, new string[0]);
+    }
+
+    async Task GoTo(int i)
+    {
+        receipts = await ReceiptsClient.GetReceiptsAsync(i * Limit, Limit, new string[0]);
+    }
+
+    async Task Prev()
+    {
+        if(receipts!._links.TryGetValue("previous", out var prev))
+        {
+            receipts = await ((Billing.Client.ClientBase)ReceiptsClient).GetAsync<Billing.Client.Receipts>(prev.Href.TrimStart('/'));
+        }
+    }
+
+    async Task Next()
+    {
+        if(receipts!._links.TryGetValue("next", out var next))
+        {
+            receipts = await ((Billing.Client.ClientBase)ReceiptsClient).GetAsync<Billing.Client.Receipts>(next.Href.TrimStart('/'));
+        }    
+    }
+}

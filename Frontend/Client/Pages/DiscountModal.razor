@@ -1,0 +1,112 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inject ICheckoutClient CheckoutClient
+@inject ICartClient CartClient
+
+<EditForm Model="@this" class="form" OnValidSubmit="Add">
+
+    <DataAnnotationsValidator />
+
+    @if (cart is not null)
+    {
+        <div class="form-group">
+            <label>Total:</label>
+            @cart.Total.ToString("c")
+        </div>
+    }
+
+<div class="form-group">
+
+    <div class="mb-3">
+        <label class="form-label">Discount amount</label>
+        <div class="input-group">
+            <InputNumber class="form-control" @bind-Value="this.DiscountAmount" min="0" aria-label="Discount amount" />
+            <span class="input-group-text">kr</span>
+        </div>
+    </div>
+
+    <ValidationMessage For="() => this.DiscountAmount" />
+
+    <div class="mb-3">
+        <label class="form-label">Discount percent</label>
+        <div class="input-group">
+            <InputNumber class="form-control" @bind-Value="this.DiscountPercent" min="0" max="100" aria-label="Discount amount" />
+            <span class="input-group-text">%</span>
+        </div>
+    </div>
+
+    <ValidationMessage For="() => this.DiscountPercent" />
+</div>
+
+    <div class="form-group">
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <InputText class="form-control" @bind-Value="this.Description" aria-label="Description" />
+        </div>
+
+        <ValidationMessage For="() => this.Description" />
+    </div>
+
+    @if (cart is not null)
+    {
+        @if ((cart!.Total - DiscountAmount) < 0)
+        {
+            <div class="form-group">
+                <p>Negative</p>
+            </div>
+        }
+    }
+
+    <button class="btn btn-primary">Add</button>
+    <button type="button" class="btn btn-secondary" @onclick="async () => await ModalInstance.CancelAsync()">Cancel</button>
+
+</EditForm>
+
+@code {
+    [CascadingParameter] public BlazoredModalInstance ModalInstance { get; set; } = null!;
+
+    [Parameter] public Guid CartId { get; set; }
+
+    [Parameter] public Guid? CartItemId { get; set; }
+
+    [Parameter] public int? CustomerNo { get; set; }
+
+    public decimal? DiscountAmount { get; set; }
+
+    public double? DiscountPercent { get; set; }
+
+    [Required]
+    public string Description { get; set; } = null!;
+
+    CartDto? cart = new CartDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cart = await CartClient.GetCartByIdAsync(CartId);
+    }
+
+    async Task Add()
+    {
+        if(CartItemId is not null)
+        {
+            await CartClient.AddDiscountToItemAsync(CartId, CartItemId.GetValueOrDefault(), new AddDiscountDto
+            {
+                Amount = DiscountAmount is not null ? DiscountAmount : null,
+                Percent = DiscountPercent is not null ? DiscountPercent / 100 : null,
+                Description = Description
+            });
+
+            await ModalInstance.CloseAsync(ModalResult.Ok(true));
+            return;
+        }
+
+        await CartClient.AddDiscountAsync(CartId, new AddDiscountDto
+        {
+            Amount = DiscountAmount is not null ? DiscountAmount : null,
+            Percent = DiscountPercent is not null ? DiscountPercent / 100 : null,
+            Description = Description
+        });
+
+        await ModalInstance.CloseAsync(ModalResult.Ok(true));
+    }
+}

@@ -1,0 +1,7 @@
+﻿@inherits LayoutComponentBase
+
+<NavMenu />
+
+<main class="container">
+    @Body
+</main>

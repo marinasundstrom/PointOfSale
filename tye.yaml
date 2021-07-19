@@ -1,0 +1,139 @@
+# tye application configuration file
+# read all about it at https://github.com/dotnet/tye
+#
+# when you've given us a try, we'd love to know what you think:
+#    https://aka.ms/AA7q20u
+#
+name: commerce
+services:
+
+- name: db
+  image: mcr.microsoft.com/azure-sql-edge:latest
+  env:
+  - name: MSSQL_SA_PASSWORD
+    value: P@ssw0rd
+  - name: MSSQL_PID
+    value: Developer
+  - name: ACCEPT_EULA
+    value: "Y"
+  bindings:
+    - port: 1433
+      connectionString: Server=${host},${port};User Id=sa;Password=${env:MSSQL_SA_PASSWORD}
+  volumes:
+    - source: .data/sql-edge
+      target: /var/opt/mssql/data
+
+- name: rabbitmq
+  image: rabbitmq:3-management
+  bindings:
+    - name: rabbit
+      port: 5672
+      protocol: rabbitmq
+    - name: management
+      port: 15672
+
+- name: frontend
+  project: Frontend/Server/Frontend.Server.csproj
+  replicas: 2
+  bindings:
+  - port: 5041
+    protocol: https
+
+- name: carts
+  project: Carts/Carts/Carts.csproj
+  bindings:
+  - port: 5020
+    protocol: https
+
+- name: catalog
+  project: Catalog/Catalog/Catalog.csproj
+  bindings:
+  - port: 5030
+    protocol: https
+
+- name: billing
+  project: Billing/Billing/Billing.csproj
+  bindings:
+  - port: 5040
+    protocol: https
+
+- name: checkout
+  project: Checkout/Checkout/Checkout.csproj
+  bindings:
+  - port: 5050
+    protocol: https
+
+- name: customers
+  project: Customers/Customers/Customers.csproj
+  bindings:
+  - port: 5060
+    protocol: https
+
+- name: marketing
+  project: Marketing/Marketing/Marketing.csproj
+  bindings:
+  - port: 5070
+    protocol: https
+
+- name: sales
+  project: Sales/Sales/Sales.csproj
+  bindings:
+  - port: 5080
+    protocol: https
+
+- name: salesui
+  project: Sales/Sales.UI/Server/Sales.UI.Server.csproj
+  bindings:
+  - port: 5081
+    protocol: https
+
+- name: warehouse
+  project: Warehouse/Warehouse/Warehouse.csproj
+  bindings:
+  - port: 5090
+    protocol: https
+
+- name: payments
+  project: Payments/Payments/Payments.csproj
+  bindings:
+  - port: 5092
+    protocol: https
+
+- name: api
+  project: WebApi/WebApi/WebApi.csproj
+  bindings:
+  - port: 5093
+    protocol: https
+
+- name: redis
+  image: redis
+  bindings:
+  - port: 6379
+    connectionString: "${host}:${port}" 
+    
+- name: redis-cli
+  image: redis
+  args: "redis-cli -h redis MONITOR"
+
+- name: nginx
+  image: nginx
+  bindings:
+    - protocol: https
+      port: 8080
+  volumes:
+    - source: nginx.conf
+      target: /etc/nginx/templates/default.conf.template
+    - source: certs
+      target: /etc/nginx/certs
+
+- name: smtp4dev
+  image: rnwood/smtp4dev:prerelease
+  bindings:
+    - name: ui
+      port: 3000
+      containerPort: 80
+      protocol: http
+    - name: smtp
+      port: 25
+      containerPort: 25
+      protocol: smtp

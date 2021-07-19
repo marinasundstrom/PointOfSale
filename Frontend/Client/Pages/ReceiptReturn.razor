@@ -1,0 +1,263 @@
+﻿@page "/receipts/{ReceiptNo:int}/return"
+@inject IReceiptsClient ReceiptsClient
+@inject ICheckoutClient CheckoutClient
+@inject NavigationManager NavigationManager
+@using System.ComponentModel.DataAnnotations;
+@using OrderPriceCalculator
+
+@if (receipt is null)
+{
+    <p><em>Loading receipt...</em></p>
+}
+else
+{
+<EditForm Model="@this" OnValidSubmit="Return">
+    <ObjectGraphDataAnnotationsValidator />
+
+    <h1>Return Receipt #@receipt.ReceiptNo</h1>
+
+    <p class="text-muted">@receipt.Date.DateTime.ToString("g")</p>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <dl>
+                <dt>Receipt #</dt>
+                <dd>@receipt.ReceiptNo</dd>
+
+                <dt>Type</dt>
+                <dd>@receipt.Type</dd>
+
+                <dt>Date</dt>
+                <dd>@receipt.Date.ToString("g")</dd>
+
+                @if(receipt.AdditionalProperties.TryGetValue("receiptNo", out var receiptNo)) 
+                {
+                    <dt>Order No.</dt>
+                    <dd>@receiptNo</dd>
+                }
+
+                 @if(receipt.AdditionalProperties.TryGetValue("customerNo", out var customerNo)) 
+                {
+                    <dt>Customer No.</dt>
+                    <dd>@customerNo</dd>
+                }
+            </dl>
+        </div>
+        <div class="col-md-6">
+            @*
+            <dl>
+                @if (receipt.Cashier is not null)
+                {
+                    <dt>Cashier</dt>
+                    <dd>@receipt.Cashier</dd>
+                }
+
+                @if (receipt.CheckoutPoint is not null)
+                {
+                    <dt>Checkout Point</dt>
+                    <dd>@receipt.CheckoutPoint</dd>
+                }
+            </dl>
+            *@
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Unit</th>
+                <th>Price (incl. VAT)</th>
+                <th>VAT</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Qty to return</th>
+                <th>Total to return</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in items)
+            {
+                <tr>
+                    <td>@item.Description</td>
+                    <td>@item.Unit</td>
+                    <td>@item.Price</td>
+                    <td>@((item.Price - (item.Price / (1m + (decimal)item.VatRate))).ToString("c")) (@(item.VatRate * 100)%)</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Total.ToString("c")</td>
+                    <td><InputNumber class="form-control" type="number" min="0" max="@item.Quantity" @bind-Value="item.QuantityReturn" /></td>
+                    <td>@item.TotalReturn.ToString("c")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <dl>
+        <dt></dt>
+        <dd>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th colspan="2">VAT</th>
+                                <th>Sub Total</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in Vat)
+                            {
+                                <tr>
+                                    <td>@s.VatRate%</td>
+                                    <td>@s.Vat.ToString("c")</td>
+                                    <td>@s.SubTotal.ToString("c")</td>
+                                    <td>@s.Total.ToString("c")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+
+                </div>
+            </div>
+        </dd>
+    </dl>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-4">
+            <dl>
+                @if (Rounding != 0)
+                {
+                    <dt>Rounding</dt>
+                    <dd>@Rounding.ToString("c")</dd>
+                }
+
+                <dt><h4>To be returned</h4></dt>
+                <dd>@Total.ToString("c")</dd>
+            </dl>
+        </div>
+
+
+    </div>
+
+    <h2 class="mb-2">Signature</h2>
+
+    <SignaturePad @ref="signature"
+                  UsedInModal
+                  MinWidth="300"
+                  MinHeight="300">
+        <SignaturePadFooter FooterDirective="@("Please Sign")" />
+    </SignaturePad>
+
+    <button class="btn btn-lg btn-primary mt-4">Return</button>
+
+</EditForm>
+
+}
+
+@code {
+    private Billing.Client.Receipt? receipt;
+    private SignaturePad signature = null!;
+
+    [ValidateComplexType]
+    public List<ReturnItemVm> items { get; } = new List<ReturnItemVm>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        receipt = await ReceiptsClient.GetReceiptByNoAsync(ReceiptNo.GetValueOrDefault(), new string[0]);
+
+        items.AddRange(receipt._embedded.Items.Select(i => new ReturnItemVm()
+        {
+            Description = i.Description,
+            ItemId = i.ItemId,
+            Price = i.Price,
+            Quantity = i.Quantity,
+            Total = i.Total,
+            Unit = i.Unit,
+            VatRate = i.VatRate
+        }));
+    }
+
+    [Parameter]
+    public int? ReceiptNo { get; set; }
+
+    public IEnumerable<VatSummaryVm> Vat => items
+        .Where(x => x.TotalReturn > 0)
+        .GroupBy(x => x.VatRate)
+        .Select(g => new VatSummaryVm
+        {
+            VatRate = (g.Key * 100),
+            SubTotal = Math.Round(g.Select(i => (i.Price * (decimal)i.QuantityReturn).SubtractVat(i.VatRate)).Sum(i => i), 2),
+            Vat = Math.Round(g.Select(i => (i.Price * (decimal)i.QuantityReturn).GetVatIncl(i.VatRate)).Sum(i => i), 2),
+            Total = Math.Round(g.Select(i => i.Price * (decimal)i.QuantityReturn).Sum(i => i), 2)
+        });
+
+    public decimal Total => items.Sum(x => x.TotalReturn);
+
+    public decimal Rounding => Total - Math.Round(Total, 2);
+
+
+    public class ReturnItemVm
+    {
+        public string? ItemId { get; set; }
+
+        public string Description { get; set; } = null!;
+
+        public decimal Price { get; set; }
+
+        public double Quantity { get; set; }
+
+        public double VatRate { get; set; }
+
+        public string Unit { get; set; } = null!;
+
+        public decimal Total { get; set; }
+
+        public double QuantityReturn { get; set; } = 0;
+
+        public decimal TotalReturn => Price * (decimal)QuantityReturn;
+    }
+
+    public class VatSummaryVm
+    {
+        public double VatRate { get; set; }
+
+        public decimal SubTotal { get; set; }
+
+        public decimal Vat { get; set; }
+
+        public decimal Total { get; set; }
+    }
+
+    public async Task Return()
+    {
+        if(!items.Where(i => i.QuantityReturn != 0).Any())
+        {
+            throw new Exception();
+        }
+
+        var signatureData = await signature.ToDataURL();
+
+        await CheckoutClient.ReturnAsync(new CheckoutReturnDto()
+        {
+            ReceiptNo = receipt!.ReceiptNo,
+            Items = items.Where(i => i.QuantityReturn != 0).Select(i => new CheckoutReturnItemDto()
+            {
+                ItemId = i.ItemId,
+                Quantity = i.QuantityReturn
+            }).ToList(),
+           Signature = signatureData
+        });
+
+        NavigationManager.NavigateTo("/receipts");
+    }
+
+}

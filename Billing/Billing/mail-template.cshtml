@@ -1,0 +1,26 @@
+@using System
+@using System.Linq
+@using Billing.Application
+
+@model Billing.Application.MailModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            font-family: Helvetica, Arial, Verdana;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hej, @Model?.FirstName!</h1>
+
+    <p>Här kommer kvittot på ditt senaste köp.</p>
+</body>
+</html>

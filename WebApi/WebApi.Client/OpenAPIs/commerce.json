@@ -1,0 +1,3982 @@
+{
+  "x-generator": "NSwag v13.11.3.0 (NJsonSchema v10.4.4.0 (Newtonsoft.Json v12.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Commerce API",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:5093"
+    }
+  ],
+  "paths": {
+    "/Receipts": {
+      "get": {
+        "tags": [
+          "Receipts"
+        ],
+        "operationId": "Receipts_GetReceipts",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 3
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipts"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Receipts/{receiptNo}": {
+      "get": {
+        "tags": [
+          "Receipts"
+        ],
+        "operationId": "Receipts_GetReceiptByNo",
+        "parameters": [
+          {
+            "name": "receiptNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Receipts/{receiptNo}/Pdf": {
+      "get": {
+        "tags": [
+          "Receipts"
+        ],
+        "operationId": "Receipts_GetReceiptAsPdf",
+        "parameters": [
+          {
+            "name": "receiptNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Receipts/{receiptNo}/Html": {
+      "get": {
+        "tags": [
+          "Receipts"
+        ],
+        "operationId": "Receipts_GetReceiptAsHtml",
+        "parameters": [
+          {
+            "name": "receiptNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Receipts/{receiptNo}/Refund": {
+      "post": {
+        "tags": [
+          "Receipts"
+        ],
+        "operationId": "Receipts_MakeRefundOnReceipt",
+        "parameters": [
+          {
+            "name": "receiptNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/OrderStatuses": {
+      "get": {
+        "tags": [
+          "OrderStatuses"
+        ],
+        "operationId": "OrderStatuses_GetOrderStatuses",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderStatuses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Items/{orderItemId}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_GetOrderItemById",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_RemoveOrderItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Items": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_AddItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddOrderItemDetails"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Items/{orderItemId}/Quantity": {
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_UpdateOrderItemQuantity",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "quantity",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Items/{orderItemId}/Discounts": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_AddDiscountToOrderItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "discount",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscountDetails"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Items/{orderItemId}/Discounts/{discountId}": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_RemoveDiscountFromOrderItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "discountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Items/{orderItemId}/Charges": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_AddChargeToOrderItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "charge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargeDetails"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Items/{orderItemId}/Charges/{chargeId}": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_RemoveChargeFromOrderItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "chargeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/{orderItemId}/CustomFields": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_AddCustomFieldToOrderItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldDefinition"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/{orderItemId}/CustomFields/{customFieldId}": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_RemoveCustomFieldFromOrderItem",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "customFieldId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_GetOrders",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Orders"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_CreateOrder",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_GetOrderByNo",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Status": {
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_UpdateOrderStatus",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "orderStatusId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Place": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_PlaceOrder",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Discounts": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_AddDiscountToOrder",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "discount",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscountDetails"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Discounts/{discountId}": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_RemoveDiscountFromOrder",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "discountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Charges": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_AddChargeToOrder",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "charge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargeDetails"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/Charges/{chargeId}": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_RemoveChargeFromOrder",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "chargeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/CustomFields": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_AddCustomFieldToOrder",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldDefinition"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Orders/{orderNo}/CustomFields/{customFieldId}": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "Orders_RemoveCustomFieldFromOrder",
+        "parameters": [
+          {
+            "name": "orderNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "customFieldId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Customers/Persons": {
+      "get": {
+        "tags": [
+          "CustomersPersons"
+        ],
+        "operationId": "CustomersPersons_GetPersons",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Persons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Customers/Persons/{personId}": {
+      "get": {
+        "tags": [
+          "CustomersPersons"
+        ],
+        "operationId": "CustomersPersons_GetPersonByCustomerNo",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Person"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Customers/Persons/{personId}/CustomFields": {
+      "post": {
+        "tags": [
+          "CustomersPersons"
+        ],
+        "operationId": "CustomersPersons_AddCustomFieldToPerson",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldDefinition"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Customers/Persons/{personId}/CustomFields/{customFieldId}": {
+      "delete": {
+        "tags": [
+          "CustomersPersons"
+        ],
+        "operationId": "CustomersPersons_RemoveCustomFieldFromPerson",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "customFieldId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Catalog/Items": {
+      "get": {
+        "tags": [
+          "CatalogItems"
+        ],
+        "operationId": "CatalogItems_GetItems",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Items"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Catalog/Items/{itemId}": {
+      "get": {
+        "tags": [
+          "CatalogItems"
+        ],
+        "operationId": "CatalogItems_GetItemById",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Catalog/Items/{itemId}/CustomFields": {
+      "post": {
+        "tags": [
+          "CatalogItems"
+        ],
+        "operationId": "CatalogItems_AddCustomFieldToItem",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldDefinition"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Catalog/Items/{itemId}/CustomFields/{customFieldId}": {
+      "delete": {
+        "tags": [
+          "CatalogItems"
+        ],
+        "operationId": "CatalogItems_RemoveCustomFieldFromItem",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "customFieldId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Carts": {
+      "get": {
+        "tags": [
+          "Carts"
+        ],
+        "operationId": "Carts_GetCarts",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "x-position": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "x-position": 2
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Carts"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Carts/{cartId}": {
+      "get": {
+        "tags": [
+          "Carts"
+        ],
+        "operationId": "Carts_GetCartById",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "embed",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Carts/{cartId}/Items": {
+      "post": {
+        "tags": [
+          "Carts"
+        ],
+        "operationId": "Carts_AddItem",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "itemId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "unit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          },
+          {
+            "name": "quantity",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "default": 1.0
+            },
+            "x-position": 5
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Carts/{cartId}/Items/{cartItemId}": {
+      "delete": {
+        "tags": [
+          "Carts"
+        ],
+        "operationId": "Carts_RemoveItem",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "cartItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Carts/{cartId}/Items/{cartItemId}/Quantity": {
+      "put": {
+        "tags": [
+          "Carts"
+        ],
+        "operationId": "Carts_UpdateItemQuantity",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "cartItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "quantity",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Carts/{cartId}/Items/Clear": {
+      "post": {
+        "tags": [
+          "Carts"
+        ],
+        "operationId": "Carts_ClearCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Receipts": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfReceiptsEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "count": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "total": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfReceiptsEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ReceiptsEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ReceiptsEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "receipts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Receipt"
+            }
+          }
+        }
+      },
+      "Receipt": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfReceiptEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "receiptNo": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "type": {
+                "$ref": "#/components/schemas/ReceiptType"
+              },
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "subTotal": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "vat": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "vatRate": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "discount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "charge": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "rounding": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "totals": {
+                "type": "object",
+                "nullable": true,
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/ReceiptTotal"
+                }
+              },
+              "payment": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PaymentDetailsDto"
+                  }
+                ]
+              },
+              "signature": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "ReceiptType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Receipt",
+          "Return",
+          "Refund"
+        ],
+        "enum": [
+          0,
+          1,
+          1
+        ]
+      },
+      "ReceiptTotal": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "subTotal": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "vat": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "total": {
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "PaymentDetailsDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "paid": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "returned": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          }
+        }
+      },
+      "ResourceOfReceiptEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ReceiptEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ReceiptEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ReceiptItem"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ReceiptDiscount"
+            }
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ReceiptCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "ReceiptItem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfReceiptItemEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "itemId": {
+                "type": "string",
+                "nullable": true
+              },
+              "unit": {
+                "type": "string",
+                "nullable": true
+              },
+              "price": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "vatRate": {
+                "type": "number",
+                "format": "double"
+              },
+              "quantity": {
+                "type": "number",
+                "format": "double"
+              },
+              "discount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "charge": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfReceiptItemEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ReceiptItemEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ReceiptItemEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ReceiptDiscount"
+            }
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ReceiptCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "ReceiptDiscount": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "discountId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "quantity": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "Resource": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "_type",
+          "mapping": {
+            "Resource`1": "#/components/schemas/ResourceOfCartsEmbedded",
+            "ReceiptDiscount": "#/components/schemas/ReceiptDiscount",
+            "ReceiptCharge": "#/components/schemas/ReceiptCharge",
+            "CustomField": "#/components/schemas/CustomField",
+            "ReceiptItem": "#/components/schemas/ReceiptItem",
+            "Receipt": "#/components/schemas/Receipt",
+            "Receipts": "#/components/schemas/Receipts",
+            "OrderStatus": "#/components/schemas/OrderStatus",
+            "OrderStatuses": "#/components/schemas/OrderStatuses",
+            "OrderDiscount": "#/components/schemas/OrderDiscount",
+            "OrderCharge": "#/components/schemas/OrderCharge",
+            "OrderItem": "#/components/schemas/OrderItem",
+            "Order": "#/components/schemas/Order",
+            "Orders": "#/components/schemas/Orders",
+            "PersonCharge": "#/components/schemas/PersonCharge",
+            "Person": "#/components/schemas/Person",
+            "Persons": "#/components/schemas/Persons",
+            "ItemCharge": "#/components/schemas/ItemCharge",
+            "Item": "#/components/schemas/Item",
+            "Items": "#/components/schemas/Items",
+            "CartDiscount": "#/components/schemas/CartDiscount",
+            "CartCharge": "#/components/schemas/CartCharge",
+            "CartItem": "#/components/schemas/CartItem",
+            "Cart": "#/components/schemas/Cart",
+            "Carts": "#/components/schemas/Carts"
+          }
+        },
+        "x-abstract": true,
+        "additionalProperties": false,
+        "required": [
+          "_type"
+        ],
+        "properties": {
+          "_links": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Link"
+            }
+          },
+          "_templates": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Template"
+            }
+          },
+          "_type": {
+            "type": "string"
+          }
+        }
+      },
+      "Link": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "nullable": true
+          },
+          "hrefLang": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "templated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Template": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "nullable": true
+          },
+          "properties": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Property"
+            }
+          },
+          "target": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Property": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string",
+            "nullable": true
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "regex": {
+            "type": "string",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "templated": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "cols": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "max": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxLength": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "min": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "minLength": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "options": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Options"
+              }
+            ]
+          },
+          "placeholder": {
+            "type": "string",
+            "nullable": true
+          },
+          "rows": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "step": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/PropertyType"
+          }
+        }
+      },
+      "Options": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "selectedValues": {
+            "type": "array",
+            "nullable": true,
+            "items": {}
+          },
+          "inline": {
+            "type": "array",
+            "nullable": true,
+            "items": {}
+          },
+          "link": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/FormLink"
+              }
+            ]
+          },
+          "maxItems": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "minItems": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "promptField": {
+            "type": "string",
+            "nullable": true
+          },
+          "valueField": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FormLink": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "templated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PropertyType": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Text",
+          "Hidden",
+          "TextArea",
+          "Search",
+          "Tel",
+          "Url",
+          "Email",
+          "Password",
+          "Date",
+          "Month",
+          "Week",
+          "Time",
+          "DatetimeLocal",
+          "Number",
+          "Range",
+          "Color"
+        ],
+        "enum": [
+          "text",
+          "hidden",
+          "textarea",
+          "search",
+          "tel",
+          "url",
+          "email",
+          "password",
+          "date",
+          "month",
+          "week",
+          "time",
+          "datetime-local",
+          "number",
+          "range",
+          "color"
+        ]
+      },
+      "Resource_1": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "$ref": "#/components/schemas/TEmbedded"
+              }
+            }
+          }
+        ]
+      },
+      "TEmbedded": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ReceiptCharge": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "chargeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "quantity": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "CustomField": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {}
+            }
+          }
+        ]
+      },
+      "OrderStatuses": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfOrderStatusesEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "count": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "total": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfOrderStatusesEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OrderStatusesEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OrderStatusesEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "orderStatuses": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderStatus"
+            }
+          }
+        }
+      },
+      "OrderStatus": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfOrderStatusEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfOrderStatusEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OrderStatusEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OrderStatusEmbedded": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "OrderItem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfOrderItemEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "itemId": {
+                "type": "string",
+                "nullable": true
+              },
+              "unit": {
+                "type": "string",
+                "nullable": true
+              },
+              "price": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "vatRate": {
+                "type": "number",
+                "format": "double"
+              },
+              "quantity": {
+                "type": "number",
+                "format": "double"
+              },
+              "discount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "charge": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfOrderItemEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OrderItemEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OrderItemEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscount"
+            }
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "OrderDiscount": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "discountId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "quantity": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "OrderCharge": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "chargeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "quantity": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "AddOrderItemDetails": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "itemId": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "DiscountDetails": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "percent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "discountId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "ChargeDetails": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "percent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "chargeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "CustomFieldDefinition": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {}
+        }
+      },
+      "Orders": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfOrdersEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "count": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "total": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfOrdersEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OrdersEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OrdersEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "orders": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          }
+        }
+      },
+      "Order": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfOrderEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "orderNo": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string"
+              },
+              "subTotal": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "vat": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "vatRate": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "discount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "charge": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "rounding": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "totals": {
+                "type": "object",
+                "nullable": true,
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/OrderTotal"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "OrderTotal": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "subTotal": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "vat": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "total": {
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "ResourceOfOrderEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OrderEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OrderEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscount"
+            }
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "CreateOrderDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateOrderItemDto"
+            }
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderChargeDto"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscountDto"
+            }
+          },
+          "customFields": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CreateOrderItemDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderChargeDto"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/OrderDiscountDto"
+            }
+          },
+          "customFields": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "OrderChargeDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "percent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "description": {
+            "type": "string"
+          },
+          "chargeId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "OrderDiscountDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "nullable": true
+          },
+          "percent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "description": {
+            "type": "string"
+          },
+          "discountId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "Persons": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfPersonsEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "count": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "total": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfPersonsEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PersonsEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "PersonsEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "persons": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          }
+        }
+      },
+      "Person": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfPersonEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "customerNo": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "middleName": {
+                "type": "string",
+                "nullable": true
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string",
+                "nullable": true
+              },
+              "ssn": {
+                "type": "string"
+              },
+              "deceased": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "notes": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfPersonEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PersonEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "PersonEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/PersonCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "PersonCharge": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "Items": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfItemsEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "count": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "total": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfItemsEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ItemsEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ItemsEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          }
+        }
+      },
+      "Item": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfItemEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string",
+                "nullable": true
+              },
+              "price": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "vatRate": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfItemEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ItemEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ItemEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ItemCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "ItemCharge": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "Carts": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfCartsEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "count": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "total": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfCartsEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CartsEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CartsEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "carts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Cart"
+            }
+          }
+        }
+      },
+      "Cart": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfCartEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "tag": {
+                "type": "string",
+                "nullable": true
+              },
+              "subTotal": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "vat": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "vatRate": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "discount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "charge": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "rounding": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "totals": {
+                "type": "object",
+                "nullable": true,
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/CartTotal"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CartTotal": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "subTotal": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "vat": {
+            "type": "number",
+            "format": "decimal"
+          },
+          "total": {
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "ResourceOfCartEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CartEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CartEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartItem"
+            }
+          },
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartDiscount"
+            }
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "CartItem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ResourceOfCartItemEmbedded"
+          },
+          {
+            "type": "object",
+            "additionalProperties": {},
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "itemId": {
+                "type": "string",
+                "nullable": true
+              },
+              "unit": {
+                "type": "string",
+                "nullable": true
+              },
+              "price": {
+                "type": "number",
+                "format": "decimal"
+              },
+              "vatRate": {
+                "type": "number",
+                "format": "double"
+              },
+              "quantity": {
+                "type": "number",
+                "format": "double"
+              },
+              "discount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "charge": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "ResourceOfCartItemEmbedded": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "_embedded": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CartItemEmbedded"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CartItemEmbedded": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "discounts": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartDiscount"
+            }
+          },
+          "charges": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CartCharge"
+            }
+          },
+          "customFields": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            }
+          }
+        }
+      },
+      "CartDiscount": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "discountId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "quantity": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "CartCharge": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "description": {
+                "type": "string"
+              },
+              "chargeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "amount": {
+                "type": "number",
+                "format": "decimal",
+                "nullable": true
+              },
+              "percent": {
+                "type": "number",
+                "format": "double",
+                "nullable": true
+              },
+              "quantity": {
+                "type": "integer",
+                "format": "int32",
+                "nullable": true
+              },
+              "total": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

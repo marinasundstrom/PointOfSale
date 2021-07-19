@@ -1,0 +1,353 @@
+﻿@page "/receipts/{ReceiptNo:int}"
+@using System.Globalization
+@inject IReceiptsClient ReceiptsClient
+@inject NavigationManager NavigationManager
+
+@if (receipt is null)
+{
+    <p><em>Loading receipt...</em></p>
+}
+else
+{
+    <h1>Receipt #@receipt.ReceiptNo</h1>
+
+    <p class="text-muted">@receipt.Date.DateTime.ToString("g")</p>
+
+    <button type="button" class="btn btn-secondary mb-2" @onclick="DownloadReceiptPdf">PDF</button>
+
+    <button type="button" class="btn btn-secondary mb-2  ml-2" @onclick="DownloadReceiptHtml">HTML</button>
+
+
+    @if (receipt.Type != ReceiptType.Return)
+    {
+        <a class="btn btn-secondary mb-2 ml-2" href="/receipts/@receipt.ReceiptNo/return">Return</a>
+    }
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <dl>
+                <dt>Receipt #</dt>
+                <dd>@receipt.ReceiptNo</dd>
+
+                <dt>Type</dt>
+                <dd>@receipt.Type</dd>
+
+                <dt>Date</dt>
+                <dd>@receipt.Date.ToString("g")</dd>
+
+                @{
+                    var orderNo = receipt.AdditionalProperties.FirstOrDefault(cf => cf.Key == "orderNo");
+                }
+
+                @if (orderNo.Value != null)
+                {
+                    <dt>Order No.</dt>
+                    <dd>@orderNo.Value</dd>
+                }
+
+                @{
+                    var customerNo = receipt.AdditionalProperties.FirstOrDefault(cf => cf.Key == "customerNo");
+                }
+
+                @if (customerNo.Value != null)
+                {
+                    <dt>Customer No.</dt>
+                    <dd>@customerNo.Value</dd>
+                }
+            </dl>
+        </div>
+        <div class="col-md-6">
+            @*
+            <dl>
+                @if (receipt.Cashier is not null)
+                {
+                    <dt>Cashier</dt>
+                    <dd>@receipt.Cashier</dd>
+                }
+
+                @if (receipt.CheckoutPoint is not null)
+                {
+                    <dt>Checkout Point</dt>
+                    <dd>@receipt.CheckoutPoint</dd>
+                }
+            </dl>
+            *@
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th colspan="2">Item</th>
+                <th>Unit</th>
+                <th>Price</th>
+                <th>VAT</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in receipt._embedded.Items)
+            {
+                <tr>
+                    <td>@item.ItemId</td>
+                    <td>@item.Description</td>
+                    <td>@item.Unit</td>
+                    <td>@item.Price.ToString("c")</td>
+                    <td>@(item.VatRate * 100)%</td>
+                    <td>@item.Quantity</td>
+                    <td>@((item.Total - item.Charge.GetValueOrDefault() - item.Discount.GetValueOrDefault()).ToString("c"))</td>
+                </tr>
+
+                @if (item.AdditionalProperties.Any()) 
+                {
+                    @if(item.AdditionalProperties.TryGetValue("regularPrice", out var regularPrice)) 
+                    {
+                        <tr>
+                            <td></td>
+                            <td colspan="2" style="padding-left: 25px">
+                                Ordinarie pris:
+                            </td>
+                            <td>
+                                @(decimal.Parse(regularPrice!.ToString()!, CultureInfo.InvariantCulture).ToString("c"))<text>/</text>@(item.Unit is not null ? item.Unit : string.Empty)
+                            </td>
+                            <td colspan="3">
+
+                            </td>
+                        </tr>
+                    }
+
+                    @if(item.AdditionalProperties.TryGetValue("serialNo", out var serialNo)) 
+                    {
+                        <tr>
+                            <td></td>
+                            <td colspan="2" style="padding-left: 25px">
+                                Serienummer:
+                            </td>
+                            <td>
+                                @serialNo
+                            </td>
+                            <td colspan="3">
+
+                            </td>
+                        </tr>
+                    }
+                }
+
+                @foreach (ReceiptCharge s in item._embedded.Charges)
+                {
+                    <tr>
+                        <td></td>
+                        <td colspan="4" style="padding-left: 25px">@s.Description</td>
+                        <td>
+                            @(s!.Percent is not null ? (s!.Percent * 100 + "%") : null)                          
+                        </td>
+                        <td>
+                            @s!.Total.ToString("c")
+                        </td>
+                    </tr>
+                }
+
+                @foreach (ReceiptDiscount s in item._embedded.Discounts)
+                {
+                    <tr>
+                        <td></td>
+                        <td colspan="4" style="padding-left: 25px">@s.Description</td>
+                        <td>
+                            @(s!.Percent is not null ? (s!.Percent * 100 + "%") : null)                          
+                        </td>
+                        <td>
+                            @s!.Total.ToString("c")
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <hr />
+
+    <dl>
+        <dt></dt>
+        <dd>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>VAT %</th>
+                                <th>Sub Total</th>
+                                <th>VAT</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(receipt.Totals != null) 
+                            {
+                                foreach (var s in receipt.Totals)
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (double.TryParse(s.Key, out var v))
+                                            {
+                                                @v<text>%</text>
+                                            }
+                                            else
+                                            {
+                                                <b>@s.Key</b>
+                                            }
+                                        </td>
+                                        <td>@s.Value.SubTotal.ToString("c")</td>
+                                        <td>@s.Value.Vat.ToString("c")</td>
+                                        <td>@s.Value.Total.ToString("c")</td>
+                                    </tr>
+                                }
+                            }
+                            <tr>
+                                <td>
+                                    <b>Total</b>
+                                </td>
+                                <td>@receipt.SubTotal?.ToString("c")</td>
+                                <td>@receipt.Vat?.ToString("c")</td>
+                                <td>@((receipt.Total- receipt.Rounding.GetValueOrDefault() - receipt._embedded.Discounts.Sum(x => x.Total)).ToString("c"))</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    @if (receipt._embedded.Discounts.Any())
+                    {
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">
+                                        @if (receipt._embedded.Discounts.Count() == 1)
+                                        {
+                                            <text>Discount</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Discounts</text>
+                                        }
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (ReceiptDiscount s in receipt._embedded.Discounts)
+                                {
+                                    <tr>
+                                        <td>@s.Description</td>
+                                        <td>
+                                            @(s!.Percent is not null ? (s!.Percent * 100 + "%") : null)
+                                        </td>
+                                        <td>
+                                            @s!.Total.ToString("c")
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <dl>
+                            @if (receipt._embedded.Discounts.Count() > 1)
+                            {
+                                <dt>Total</dt>
+                                <dd>@receipt.Discount?.ToString("c")</dd>
+                            }
+                        </dl>
+                    }
+                </div>
+            </div>
+        </dd>
+    </dl>
+
+    <div class="row">
+        <div class="col-md-4">
+            <dl>
+                <dt>Sub Total</dt>
+                <dd>@receipt.SubTotal?.ToString("c")</dd>
+
+                <dt>VAT</dt>
+                <dd>@receipt.Vat?.ToString("c")</dd>
+
+                @if (receipt.Charge is not null)
+                {
+                    <dt>Charges</dt>
+                    <dd>@receipt.Charge?.ToString("c")</dd>
+                }
+
+                @if (receipt.Discount is not null)
+                {
+                    <dt>Discounts</dt>
+                    <dd>@receipt.Discount?.ToString("c")</dd>
+                }
+
+                @if (receipt.Rounding is not null && receipt.Rounding != 0)
+                {
+                    <dt>Rounding</dt>
+                    <dd>@receipt.Rounding?.ToString("c")</dd>
+                }
+
+                <dt><h4>Total</h4></dt>
+                <dd>@receipt.Total.ToString("c")</dd>
+
+                @if (receipt.Type == ReceiptType.Return)
+                {
+                    <dt><h4>Returned to customer</h4></dt>
+                    <dd>@receipt.Total.ToString("c")</dd>
+                }
+            </dl>
+        </div>
+
+        <div class="col">
+            <dl>
+                @if (receipt.Payment?.Paid is not null)
+                {
+                    <dt>Cash Paid</dt>
+                    <dd>@receipt.Payment.Paid?.ToString("c")</dd>
+                }
+
+                @if (receipt.Payment?.Returned is not null)
+                {
+                    <dt>Cash Returned</dt>
+                    <dd>@receipt.Payment.Returned?.ToString("c")</dd>
+                }
+            </dl>
+        </div>
+    </div>
+
+    @if (receipt.Signature is not null)
+    {
+        <img src="@receipt.Signature" />
+    }
+}
+
+@code {
+    private Billing.Client.Receipt? receipt;
+
+    protected override async Task OnInitializedAsync()
+    {
+        receipt = await ReceiptsClient.GetReceiptByNoAsync(ReceiptNo.GetValueOrDefault(), new string[] {
+            "items", "discounts", "charges"
+        });
+    }
+
+    [Parameter]
+    public int? ReceiptNo { get; set; }
+
+    async Task DownloadReceiptPdf()
+    {
+        //var result = await ReceiptsClient.ReceiptToPdfAsync(receipt!.Id);
+
+        NavigationManager.NavigateTo($"{NavigationManager.BaseUri}billing/api/Receipts/{receipt!.Id}/Pdf", true);
+    }
+
+    async Task DownloadReceiptHtml()
+    {
+        //var result = await ReceiptsClient.ReceiptToPdfAsync(receipt!.Id);
+
+        NavigationManager.NavigateTo($"{NavigationManager.BaseUri}billing/api/Receipts/{receipt!.Id}/Html", true);
+    }
+}
